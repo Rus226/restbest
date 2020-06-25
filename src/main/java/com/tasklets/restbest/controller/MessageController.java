@@ -1,11 +1,14 @@
 package com.tasklets.restbest.controller;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.tasklets.restbest.entity.Message;
+import com.tasklets.restbest.entity.Views;
 import com.tasklets.restbest.repository.MessageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,6 +20,7 @@ public class MessageController {
     private final MessageRepository messageRepository;
 
     @GetMapping
+    @JsonView(Views.IdName.class)
     public List<Message> list(){
         return messageRepository.findAll();
     }
@@ -28,6 +32,7 @@ public class MessageController {
 
     @PostMapping
     public Message create(@RequestBody Message message) {
+        message.setCreationDate(LocalDateTime.now());
         return messageRepository.save(message);
     }
 
@@ -41,8 +46,7 @@ public class MessageController {
     }
 
     @DeleteMapping("{id}")
-    public void delete(@PathVariable("id") Message id){
-        System.out.println(id);
-        messageRepository.delete(id);
+    public void delete(@PathVariable Long id){
+        messageRepository.deleteById(id);
     }
 }
